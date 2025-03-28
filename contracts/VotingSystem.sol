@@ -5,7 +5,7 @@ pragma solidity ^0.8.28;
 // import "hardhat/console.sol";
 
 contract VotingSystem {
-    struct Voter{
+    struct Voter {
         bool hasVoted;
         uint256 vote;
     }
@@ -17,19 +17,22 @@ contract VotingSystem {
     }
 
     mapping(address => Voter) public voters;
-    mapping(uint256=>Candidate) public candidates;
+    mapping(uint256 => Candidate) public candidates;
     uint256 public candidatesCount;
 
     event VoteCasted(address voter, uint256 candidateId);
 
-    function addCandidate(string memory _name) public{
+    function addCandidate(string memory _name) public {
         candidatesCount++;
         candidates[candidatesCount] = Candidate(candidatesCount, _name, 0); // 후보자 등록
     }
 
-    function vote(uint256 _candidateId )public{
+    function vote(uint256 _candidateId) public {
         require(!voters[msg.sender].hasVoted, "You have already voted");
-        require(_candidateId > 0 && _candidateId <=candidatesCount, "Invalid candidate");
+        require(
+            _candidateId > 0 && _candidateId <= candidatesCount,
+            "Invalid candidate"
+        );
 
         voters[msg.sender] = Voter(true, _candidateId);
         candidates[_candidateId].voteCount++;
@@ -56,12 +59,12 @@ contract VotingSystem {
 
     error NotOwner(address caller);
 
-    constructor(){
+    constructor() {
         owner = msg.sender;
     }
 
     function OwnerOnlyAction() public view {
-        if(msg.sender != owner) {
+        if (msg.sender != owner) {
             revert NotOwner(msg.sender);
         }
     }
